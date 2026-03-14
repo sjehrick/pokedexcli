@@ -6,6 +6,12 @@ import (
 	"os"
 )
 
+type cliCommand struct {
+	name        string
+	description string
+	callback    func() error
+}
+
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 
@@ -14,6 +20,14 @@ func main() {
 		scanner.Scan()
 		line := scanner.Text()
 		cleanLine := cleanInput(line)
-		fmt.Print("Your command was: ", cleanLine[0], "\n")
+		val, ok := getCommands()[cleanLine[0]]
+		if ok {
+			err := val.callback()
+			if err != nil {
+				fmt.Print(err)
+			}
+		} else {
+			fmt.Print("Unknown command")
+		}
 	}
 }
