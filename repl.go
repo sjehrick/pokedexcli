@@ -42,3 +42,11 @@ func getCommands() map[string]cliCommand {
 		},
 	}
 }
+
+func commandMap(*config) error {
+	return nil
+}
+
+func commandMapb(*config) error {
+	return nil
+}
