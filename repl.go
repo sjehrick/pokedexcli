@@ -10,13 +10,13 @@ func cleanInput(text string) []string {
 	return strings.Fields(strings.ToLower(text))
 }
 
-func commandExit(*config) error {
+func commandExit(config *config) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp(*config) error {
+func commandHelp(config *config) error {
 	fmt.Println()
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
@@ -40,13 +40,23 @@ func getCommands() map[string]cliCommand {
 			description: "Displays a help message",
 			callback:    commandHelp,
 		},
+		"map": {
+			name:        "map",
+			description: "Displays twenty locations",
+			callback:    commandMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Displays previous twenty locations",
+			callback:    commandMapb,
+		},
 	}
 }
 
-func commandMap(*config) error {
+func commandMap(config *config) error {
 	return nil
 }
 
-func commandMapb(*config) error {
+func commandMapb(config *config) error {
 	return nil
 }

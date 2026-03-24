@@ -9,7 +9,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config) error
 }
 
 type config struct {
@@ -19,6 +19,7 @@ type config struct {
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
+	cfg := &config{}
 
 	for {
 		fmt.Print("Pokedex > ")
@@ -27,7 +28,7 @@ func main() {
 		cleanLine := cleanInput(line)
 		val, ok := getCommands()[cleanLine[0]]
 		if ok {
-			err := val.callback()
+			err := val.callback(cfg)
 			if err != nil {
 				fmt.Print(err)
 			}
