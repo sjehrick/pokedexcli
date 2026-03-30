@@ -17,9 +17,22 @@ type config struct {
 	Previous string
 }
 
+type Response struct {
+	Count    int    `json:"count"`
+	Next     string `json:"next"`
+	Previous string `json:"previous"`
+	Results  []struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"results"`
+}
+
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	cfg := &config{}
+
+	cfg.Next = "https://pokeapi.co/api/v2/location-area"
+	cfg.Previous = "null"
 
 	for {
 		fmt.Print("Pokedex > ")

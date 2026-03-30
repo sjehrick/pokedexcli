@@ -57,7 +57,7 @@ func getCommands() map[string]cliCommand {
 }
 
 func commandMap(config *config) error {
-	res, err := http.Get("http://www.google.com/robots.txt")
+	res, err := http.Get("http://www.google.com/robots.txt") // replace with poke API location
 	if err != nil {
 		log.Fatal(err)
 	}
