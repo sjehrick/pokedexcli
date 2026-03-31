@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -57,7 +58,7 @@ func getCommands() map[string]cliCommand {
 }
 
 func commandMap(config *config) error {
-	res, err := http.Get("http://www.google.com/robots.txt") // replace with poke API location
+	res, err := http.Get(config.Next)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -69,11 +70,27 @@ func commandMap(config *config) error {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	response := Response{}
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if response.Next != nil {
+		config.Next = *response.Next
+	}
+	if response.Previous != nil {
+		config.Previous = *response.Previous
+	}
+
+	fmt.Println(response.Results)
+
 	return nil
 }
 
 func commandMapb(config *config) error {
-	res, err := http.Get("http://www.google.com/robots.txt")
+	res, err := http.Get(config.Previous)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -85,5 +102,20 @@ func commandMapb(config *config) error {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	response := Response{}
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if response.Next != nil {
+		config.Next = *response.Next
+	}
+	if response.Previous != nil {
+		config.Previous = *response.Previous
+	}
+
+	fmt.Println(response.Results)
 	return nil
 }
