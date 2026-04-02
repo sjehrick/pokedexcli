@@ -84,7 +84,9 @@ func commandMap(config *config) error {
 		config.Previous = *response.Previous
 	}
 
-	fmt.Println(response.Results)
+	for _, result := range response.Results {
+		fmt.Println(result.Name)
+	}
 
 	return nil
 }
@@ -116,6 +118,9 @@ func commandMapb(config *config) error {
 		config.Previous = *response.Previous
 	}
 
-	fmt.Println(response.Results)
+	for _, result := range response.Results {
+		fmt.Println(result.Name)
+	}
+
 	return nil
 }
