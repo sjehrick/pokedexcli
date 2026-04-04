@@ -58,7 +58,7 @@ func getCommands() map[string]cliCommand {
 }
 
 func commandMap(config *config) error {
-	res, err := http.Get(config.Next)
+	res, err := http.Get(*config.Next)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -78,10 +78,10 @@ func commandMap(config *config) error {
 	}
 
 	if response.Next != nil {
-		config.Next = *response.Next
+		config.Next = response.Next
 	}
 	if response.Previous != nil {
-		config.Previous = *response.Previous
+		config.Previous = response.Previous
 	}
 
 	for _, result := range response.Results {
@@ -92,7 +92,7 @@ func commandMap(config *config) error {
 }
 
 func commandMapb(config *config) error {
-	res, err := http.Get(config.Previous)
+	res, err := http.Get(*config.Previous)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -112,10 +112,10 @@ func commandMapb(config *config) error {
 	}
 
 	if response.Next != nil {
-		config.Next = *response.Next
+		config.Next = response.Next
 	}
 	if response.Previous != nil {
-		config.Previous = *response.Previous
+		config.Previous = response.Previous
 	}
 
 	for _, result := range response.Results {

@@ -13,8 +13,8 @@ type cliCommand struct {
 }
 
 type config struct {
-	Next     string
-	Previous string
+	Next     *string
+	Previous *string
 }
 
 type Response struct {
