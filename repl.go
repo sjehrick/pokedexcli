@@ -1,35 +1,11 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
-	"log"
-	"net/http"
-	"os"
 	"strings"
 )
 
 func cleanInput(text string) []string {
 	return strings.Fields(strings.ToLower(text))
-}
-
-func commandExit(config *config) error {
-	fmt.Println("Closing the Pokedex... Goodbye!")
-	os.Exit(0)
-	return nil
-}
-
-func commandHelp(config *config) error {
-	fmt.Println()
-	fmt.Println("Welcome to the Pokedex!")
-	fmt.Println("Usage:")
-	fmt.Println()
-	for _, cmd := range getCommands() {
-		fmt.Printf("%s: %s\n", cmd.name, cmd.description)
-	}
-	fmt.Println()
-	return nil
 }
 
 func getCommands() map[string]cliCommand {
@@ -55,72 +31,4 @@ func getCommands() map[string]cliCommand {
 			callback:    commandMapb,
 		},
 	}
-}
-
-func commandMap(config *config) error {
-	res, err := http.Get(*config.Next)
-	if err != nil {
-		log.Fatal(err)
-	}
-	body, err := io.ReadAll(res.Body)
-	res.Body.Close()
-	if res.StatusCode > 299 {
-		log.Fatalf("Response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
-	}
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	response := Response{}
-	err = json.Unmarshal(body, &response)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if response.Next != nil {
-		config.Next = response.Next
-	}
-	if response.Previous != nil {
-		config.Previous = response.Previous
-	}
-
-	for _, result := range response.Results {
-		fmt.Println(result.Name)
-	}
-
-	return nil
-}
-
-func commandMapb(config *config) error {
-	res, err := http.Get(*config.Previous)
-	if err != nil {
-		log.Fatal(err)
-	}
-	body, err := io.ReadAll(res.Body)
-	res.Body.Close()
-	if res.StatusCode > 299 {
-		log.Fatalf("Response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
-	}
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	response := Response{}
-	err = json.Unmarshal(body, &response)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if response.Next != nil {
-		config.Next = response.Next
-	}
-	if response.Previous != nil {
-		config.Previous = response.Previous
-	}
-
-	for _, result := range response.Results {
-		fmt.Println(result.Name)
-	}
-
-	return nil
 }
