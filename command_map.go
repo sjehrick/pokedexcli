@@ -1,77 +1,40 @@
 package main
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
-	"io"
-	"log"
-	"net/http"
 )
 
 func commandMap(cfg *config) error {
-	res, err := http.Get(*cfg.Next)
+	locationsResp, err := cfg.pokeapiClient.ListLocations(cfg.nextLocationsURL)
 	if err != nil {
-		log.Fatal(err)
-	}
-	body, err := io.ReadAll(res.Body)
-	res.Body.Close()
-	if res.StatusCode > 299 {
-		log.Fatalf("Response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
-	}
-	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	response := Response{}
-	err = json.Unmarshal(body, &response)
-	if err != nil {
-		log.Fatal(err)
-	}
+	cfg.nextLocationsURL = locationsResp.Next
+	cfg.prevLocationsURL = locationsResp.Previous
 
-	if response.Next != nil {
-		cfg.Next = response.Next
+	for _, loc := range locationsResp.Results {
+		fmt.Println(loc.Name)
 	}
-	if response.Previous != nil {
-		cfg.Previous = response.Previous
-	}
-
-	for _, result := range response.Results {
-		fmt.Println(result.Name)
-	}
-
 	return nil
 }
 
 func commandMapb(cfg *config) error {
-	res, err := http.Get(*cfg.Previous)
+	if cfg.prevLocationsURL == nil {
+		return errors.New("you're on the first page")
+	}
+
+	locationResp, err := cfg.pokeapiClient.ListLocations(cfg.prevLocationsURL)
 	if err != nil {
-		log.Fatal(err)
-	}
-	body, err := io.ReadAll(res.Body)
-	res.Body.Close()
-	if res.StatusCode > 299 {
-		log.Fatalf("Response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
-	}
-	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	response := Response{}
-	err = json.Unmarshal(body, &response)
-	if err != nil {
-		log.Fatal(err)
-	}
+	cfg.nextLocationsURL = locationResp.Next
+	cfg.prevLocationsURL = locationResp.Previous
 
-	if response.Next != nil {
-		cfg.Next = response.Next
+	for _, loc := range locationResp.Results {
+		fmt.Println(loc.Name)
 	}
-	if response.Previous != nil {
-		cfg.Previous = response.Previous
-	}
-
-	for _, result := range response.Results {
-		fmt.Println(result.Name)
-	}
-
 	return nil
 }
