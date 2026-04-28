@@ -1,29 +1,33 @@
+// Package pokecache provides caching functionality for pokeapi clients
 package pokecache
 
 import (
 	"time"
 )
 
-func NewCache(interval time.Duration) {
-	cache := Cache{
-		Interval: interval,
-		Entry:    make(map[string]cacheEntry),
+func NewCache(interval time.Duration) *Cache {
+	cache := &Cache{
+		interval: interval,
+		entry:    make(map[string]cacheEntry),
 	}
 	go cache.reapLoop()
+
+	return cache
 }
 
 func (c *Cache) Add(key string, val []byte) {
-	c.Mu.Lock()
-	defer c.Mu.Unlock()
-	c.Entry[key] = cacheEntry{
-		val: val,
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.entry[key] = cacheEntry{
+		createdAt: time.Now(),
+		val:       val,
 	}
 }
 
 func (c *Cache) Get(key string) ([]byte, bool) {
-	c.Mu.Lock()
-	defer c.Mu.Unlock()
-	e, ok := c.Entry[key]
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	e, ok := c.entry[key]
 	if !ok {
 		return nil, false
 	}
@@ -31,9 +35,14 @@ func (c *Cache) Get(key string) ([]byte, bool) {
 }
 
 func (c *Cache) reapLoop() {
-	ticker := time.NewTicker(c.Interval)
+	ticker := time.NewTicker(c.interval)
 	for t := range ticker.C {
-		for _, e := range c.Entry {
+		c.mu.Lock()
+		for k, e := range c.entry {
+			if e.createdAt.Before(t.Add(-c.interval)) {
+				delete(c.entry, k)
+			}
 		}
+		c.mu.Unlock()
 	}
 }
