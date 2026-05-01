@@ -1,5 +1,5 @@
 package main
 
-func commandExplore(param string) error {
+func commandExplore(cfg *config, p string) error {
 	return nil
 }
