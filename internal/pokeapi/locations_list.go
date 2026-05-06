@@ -52,9 +52,9 @@ func (c *Client) ListLocations(pageURL *string) (RespShallowLocations, error) {
 }
 
 func (c *Client) ListPokemonEncounters(pageURL string) (RespExploreLocation, error) {
-	url := baseURL + "/location-area"
+	url := baseURL + "/location-area/"
 	if pageURL != "" {
-		url = url + "/" + pageURL
+		url = url + pageURL
 	}
 
 	cachedUrl, exists := c.pokeCache.Get(url)
