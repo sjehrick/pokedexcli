@@ -94,3 +94,47 @@ func (c *Client) ListPokemonEncounters(pageURL string) (RespExploreLocation, err
 
 	return pokemonResp, nil
 }
+
+func (c *Client) ListPokemonStats(pageURL string) (RespPokemonStats, error) {
+	url := baseURL + "/pokemon/"
+	if pageURL != "" {
+		url = url + pageURL
+	}
+
+	cachedUrl, exists := c.pokeCache.Get(url)
+	if exists {
+		pokemonResp := RespPokemonStats{}
+		err := json.Unmarshal(cachedUrl, &pokemonResp)
+		if err != nil {
+			return RespPokemonStats{}, err
+		}
+
+		return pokemonResp, nil
+	}
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return RespPokemonStats{}, err
+	}
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return RespPokemonStats{}, err
+	}
+	defer resp.Body.Close()
+
+	dat, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return RespPokemonStats{}, err
+	}
+
+	c.pokeCache.Add(url, dat)
+
+	pokemonResp := RespPokemonStats{}
+	err = json.Unmarshal(dat, &pokemonResp)
+	if err != nil {
+		return RespPokemonStats{}, err
+	}
+
+	return pokemonResp, nil
+}
