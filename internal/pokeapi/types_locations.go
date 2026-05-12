@@ -20,11 +20,10 @@ type RespExploreLocation struct {
 	} `json:"pokemon_encounters"`
 }
 
-type RespPokemonStats struct {
+type Pokemon struct {
 	BaseExperience         int    `json:"base_experience"`
 	Height                 int    `json:"height"`
 	ID                     int    `json:"id"`
-	IsDefault              bool   `json:"is_default"`
 	LocationAreaEncounters string `json:"location_area_encounters"`
 	Stats                  []struct {
 		BaseStat int `json:"base_stat"`

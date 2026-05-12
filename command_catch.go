@@ -23,6 +23,7 @@ func commandCatch(cfg *config, p string) error {
 
 	if respPokemon.BaseExperience <= randCatch {
 		fmt.Println(p + " was caught!")
+		cfg.pokedex[p] = respPokemon
 		return nil
 	}
 
